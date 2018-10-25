@@ -1,0 +1,36 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Token mint</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-form-field>
+            <mat-label>Amount</mat-label>
+            <input type="number" matInput min="0" id="amount" (input)="mintModel.amount = $event.target.value">
+            <span matSuffix>OTH</span>
+            <mat-hint>the amount of tokens to mint</mat-hint>
+        </mat-form-field>
+        <p></p>
+        <mat-form-field>
+            <mat-label>Select receiver</mat-label>
+            <mat-select name="account" [(value)]="mintModel.receiver">
+                <mat-option *ngFor="let account of accounts$ | async" [value]="account.address">{{account.fullName()}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br>
+        <mat-form-field class="address-field">
+            <mat-label>Receiver Address</mat-label>
+            <input type="text" matInput id="receiver" (input)="mintModel.receiver = $event.target.value" [(value)]="mintModel.receiver">
+        </mat-form-field>
+        <!-- <mat-form-field id="address-selector" class="address-field">
+                        <mat-select name="account" (selectionChange)="setMintReceiver($event)" [(value)]="model.mintreceiver" placeholder="Address">
+                            <mat-option *ngFor="let account of accounts" [value]="account">{{account}}</mat-option>
+                        </mat-select>
+                        </mat-form-field> -->
+        
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" [disabled]="mintModel.amount == 0 || mintModel.receiver == '' || minting" (click)="mintOth()">MINT</button>
+        <button mat-raised-button color="primary" (click)="finishMint()">Finish Minting</button>
+        <button mat-raised-button routerLink="../">Back</button>
+    </mat-card-actions>
+</mat-card>

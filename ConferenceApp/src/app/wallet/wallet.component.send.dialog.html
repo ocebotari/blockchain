@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>Send OTH</h1>
+<div mat-dialog-content>
+    <mat-horizontal-stepper [linear]="true" #stepper="matHorizontalStepper">
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>SEND TRANSACTION</ng-template>
+                <mat-form-field class="address-field">
+                    <input placeholder="Receiver Address" matInput (input)="data.receiver = $event.target.value" formControlName="recipientCtrl" autocomplete="off" required>
+                </mat-form-field>                
+                <mat-form-field>
+                    <input placeholder="Amount" type="number" matInput min="0.01" step="0.01" (input)="data.amount = $event.target.value" formControlName="amountCtrl" autocomplete="off" required>
+                    <!-- <span matSuffix>OTH</span> -->
+                </mat-form-field>
+                <mat-radio-group formControlName="amountType">
+                    <mat-radio-button value="oth">OTH</mat-radio-button>
+                    <mat-radio-button value="eth">Ether</mat-radio-button>
+                </mat-radio-group>
+                <p></p>
+                <button mat-raised-button matStepperNext color="primary">NEXT</button>
+            </form>
+        </mat-step>
+        <mat-step>
+            <form>
+                <ng-template matStepLabel>CONFIRM TRANSACTION</ng-template>
+                <mat-form-field class="address-field">
+                    <input placeholder="Receiver Address" matInput [(value)]="data.receiver" readonly>
+                </mat-form-field>                
+                <mat-form-field>
+                    <input placeholder="Amount" type="number" matInput [(value)]="data.amount" readonly>
+                    <span matSuffix>{{firstFormGroup.value.amountType.toUpperCase()}}</span>
+                </mat-form-field>
+                
+                <div>
+                    <button mat-raised-button color="primary" matStepperPrevious>BACK</button>
+                    <button mat-raised-button color="warn" (click)="onRejectClick()">REJECT</button>
+                    <button mat-raised-button color="primary" [mat-dialog-close]="data" (click)="onConfirmClick()">SUBMIT</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-horizontal-stepper>
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>CANCEL</button>
+  <!-- <button mat-button [mat-dialog-close]="data" cdkFocusInitial>next</button> -->
+</div>

@@ -1,0 +1,48 @@
+<p></p>
+<mat-spinner *ngIf="!resourcesLoaded" diameter="30"></mat-spinner>
+<button *ngIf="resourcesLoaded" mat-button color="primary" routerLink="./token/create">Create Token</button>
+<mat-table [dataSource]="model | async" class="mat-elevation-z8 hide">
+    <!--- Note that these columns can be defined in any order.
+    The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+        <a matLine routerLink="./{{element.address}}">{{element.name}}</a>
+        </mat-cell>
+    </ng-container>
+
+    <!-- TotalSupply Column -->
+    <ng-container matColumnDef="totalSupply">
+        <mat-header-cell *matHeaderCellDef> Total Supply </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.totalSupply}}</mat-cell>
+    </ng-container>
+
+    <!-- symbol Column -->
+    <ng-container matColumnDef="symbol">
+        <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
+    </ng-container>
+
+    <!-- owner Column -->
+    <ng-container matColumnDef="owner">
+        <mat-header-cell *matHeaderCellDef> Owner </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <a matLine routerLink="/accounts/{{element.owner?.address}}">
+                {{element.owner?.fullName()}}
+            </a>
+        </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.owner}} </mat-cell>
+    </ng-container>
+
+    <!-- symbol Column -->
+    <ng-container matColumnDef="decimals">
+        <mat-header-cell *matHeaderCellDef> Decimals </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.decimals}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+</mat-table>

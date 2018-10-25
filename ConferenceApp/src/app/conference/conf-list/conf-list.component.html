@@ -1,0 +1,75 @@
+<p></p>
+<mat-spinner *ngIf="!resourcesLoaded" diameter="30"></mat-spinner>
+<mat-table [dataSource]="list | async" class="mat-elevation-z8 hide">
+    <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Title Column -->
+    <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef> Title </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <a matLine routerLink="/conferences/{{element.address}}">{{element.title}}</a>
+            <p matLine>{{element.descriptions}}</p>
+            <p matLine>{{element.organizer}}</p>
+        </mat-cell>
+    </ng-container>
+
+    <!-- Organizer Column -->
+    <ng-container matColumnDef="owner">
+        <mat-header-cell *matHeaderCellDef> Created By </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <a matLine routerLink="/accounts/{{element.owner?.address}}">
+                {{element.owner?.fullName()}}
+            </a>
+        </mat-cell>
+    </ng-container>
+
+    <!-- Token Column -->
+    <ng-container matColumnDef="token">
+        <mat-header-cell *matHeaderCellDef> Token </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.token}} </mat-cell>
+    </ng-container>
+
+    <!-- Start Date Column -->
+    <ng-container matColumnDef="sdate">
+        <mat-header-cell *matHeaderCellDef> Start date </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.sDate | date:'full'}} </mat-cell>
+    </ng-container>
+
+    <!-- Start Date Column -->
+    <ng-container matColumnDef="edate">
+        <mat-header-cell *matHeaderCellDef> End date </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.eDate | date:'full'}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+</mat-table>
+
+<mat-label *ngIf="isEmpty">No data</mat-label>
+<div class="left" *ngFor="let item of list | async">
+<mat-card class="item-mat-card">
+    <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title><a routerLink="/conferences/{{item.address}}">{{item.title}}</a></mat-card-title>
+        <mat-card-subtitle>{{item.sDate | date:'medium'}} - {{item.eDate | date:'medium'}}</mat-card-subtitle>
+    </mat-card-header>
+
+    <img mat-card-image [(src)]="item.image" alt="{{item.title}}">
+
+    <mat-card-content>
+        <p>
+            {{item.organizer}}
+        </p>
+        <p>
+            {{item.descriptions}}
+        </p>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-button>LIKE</button>
+        <button mat-button>SHARE</button>
+    </mat-card-actions>
+</mat-card>
+</div>
+<br>

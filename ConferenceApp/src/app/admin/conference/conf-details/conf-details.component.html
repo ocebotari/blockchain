@@ -1,0 +1,363 @@
+<h2>Conference</h2>
+
+<mat-accordion class="center-headers-align">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            Properties
+            </mat-panel-title>
+            <mat-panel-description>
+                Conference details
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="flex-container">
+            <mat-form-field>
+                <input type="text" matInput id="address" [(value)]="model.address" placeholder="Conference address" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [(value)]="model.title" placeholder="Title" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <textarea matInput readonly [(value)]="model.descriptions" placeholder="Description"></textarea>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [value]="model.sDate | date:'full'" placeholder="Start Date" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [value]="model.eDate | date:'full'" placeholder="End Date" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput value="{{model.owner?.fullName()}}" placeholder="Owner" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [(value)]="model.organizer" placeholder="Organizer" readonly>
+            </mat-form-field>
+            <mat-form-field class="number-field">
+                <input type="text" matInput [(value)]="model.numVotTokens" placeholder="Default count of votes per attendee" readonly>
+            </mat-form-field>
+            <mat-form-field class="number-field">
+                <input type="text" matInput [(value)]="model.numAttendees" placeholder="Current number of attendees" readonly>
+            </mat-form-field>
+            <mat-form-field class="number-field">
+                <input type="text" matInput id="attendeeFreeSlots" [(value)]="model.attendeeFreeSlots" placeholder="Free attendee slots"
+                    readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [(value)]="model.token" placeholder="OTH address" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [value]="model.created | date: 'full'" placeholder="Created" readonly>
+            </mat-form-field>
+        </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Balance
+            </mat-panel-title>
+            <mat-panel-description>
+                Get conference's balance
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-form-field class="number-field">
+            <input type="text" matInput value="{{model.balance?.toFixed(3)}}" readonly>
+            <span matSuffix>OTH</span>
+        </mat-form-field>
+        <p></p>
+        <mat-form-field class="number-field">
+            <input type="text" matInput value="{{model.balanceEth?.toFixed(3)}}" readonly>
+            <span matSuffix>ETH</span>
+        </mat-form-field>
+        <mat-action-row>
+            <button mat-button color="primary" (click)="getConferenceBalance()">Balance</button>
+        </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Maximum attendee slots
+            </mat-panel-title>
+            <mat-panel-description>
+                Change the maximum number of conference attendee slots
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-form-field class="number-field">
+            <input type="number" matInput [(value)]="maxNumAttendees" (input)="maxNumAttendees = $event.target.value" >
+        </mat-form-field>
+        <mat-action-row>
+            <mat-spinner *ngIf="changingMaxAttendees" diameter="20"></mat-spinner>
+            <button mat-button color="primary" [disabled]="maxNumAttendees == 0 || changingMaxAttendees" (click)="changeMaxNumAttendees()">
+                Save
+            </button>
+            <button mat-button (click)="maxNumAttendees = model.maxAttendees">Cancel</button>
+        </mat-action-row>
+    </mat-expansion-panel> 
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Vouchers
+            </mat-panel-title>
+            <mat-panel-description>
+                Add/Edit voucher
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="flex-container">
+            <mat-form-field>
+                <mat-select [(value)]="editedVoucher" placeholder="Select voucher">
+                    <mat-option *ngFor="let voucher of model.voucherList" [value]="voucher">
+                        {{ voucher.toString() }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <mat-accordion class="center-headers-align">
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Edit Voucher
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        This is a voucher properties
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+            
+                <div *ngIf="editedVoucher.id > 0" class="flex-container">
+                    <mat-form-field>
+                        <mat-label>Id</mat-label>
+                        <input type="text" matInput [(value)]="editedVoucher.id" readonly>
+                    </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <mat-label>Title</mat-label>
+                        <input type="text" matInput [(value)]="editedVoucher.title" readonly>
+                    </mat-form-field>
+                    <mat-form-field class="number-field">
+                        <mat-label>Discount</mat-label>
+                        <input type="text" matInput value="{{editedVoucher.discount | number:'1.2'}}" readonly>
+                        <span matSuffix>%</span>
+                    </mat-form-field>
+                    <mat-form-field class="number-field">
+                        <mat-label>Price</mat-label>
+                        <input type="text" matInput value="{{editedVoucher.price}}" readonly>
+                        <span matSuffix>OTHs</span>
+                    </mat-form-field>
+                    <mat-checkbox [(ngModel)]="editedVoucher.active">Active</mat-checkbox>
+                </div>
+                <mat-action-row>
+                    <mat-spinner *ngIf="voucherChange" diameter="20"></mat-spinner>
+                    <button mat-button color="primary" [disabled]="editedVoucher.id <= 0 || voucherChange" (click)="changeVoucherState()">
+                        Save voucher state
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        New Voucher
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        This is a new voucher properties
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="flex-container">
+                    <mat-form-field class="full-width">
+                        <mat-label>Title</mat-label>
+                        <input type="text" matInput [(value)]="newVoucher.title" (input)="newVoucher.title = $event.target.value" required>
+                    </mat-form-field>
+                    <p></p>
+                    <mat-form-field class="number-field">
+                        <mat-label>Discount</mat-label>
+                        <input type="number" step="0.50" matInput [(value)]="newVoucher.discount" (input)="newVoucher.discount = $event.target.value"
+                            required>
+                        <span matSuffix>%</span>
+                    </mat-form-field>
+                    <p></p>
+                    <mat-form-field class="number-field">
+                        <mat-label>Price</mat-label>
+                        <input type="number" step="0.50" matInput [(value)]="newVoucher.price" (input)="newVoucher.price = $event.target.value" required>
+                        <span matSuffix>OTHs</span>
+                    </mat-form-field>
+                    <mat-checkbox [(ngModel)]="newVoucher.active">Active</mat-checkbox>
+                </div>
+                <mat-action-row>
+                    <mat-spinner *ngIf="voucherAdding" diameter="20"></mat-spinner>
+                    <button mat-button color="warn" [disabled]="voucherAdding" (click)="addVoucher()">
+                        Save new voucher
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-expansion-panel> 
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Speakers
+            </mat-panel-title>
+            <mat-panel-description>
+                Add selected address to the conference's speaker list
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <h3>Available List</h3>
+        <mat-hint *ngIf="!availableSpeakerList || availableSpeakerList.length == 0">No data</mat-hint>
+        <mat-selection-list #availablelist class="scrollable">
+            <mat-list-option *ngFor="let account of availableSpeakerList;last as last" [(value)]="account.address">
+                {{account.fullName()}}
+                <mat-divider *ngIf="!last"></mat-divider> 
+            </mat-list-option>
+        </mat-selection-list>                
+        <p>
+            Options selected: {{availablelist.selectedOptions.selected.length}}
+            <button mat-button color="primary" [disabled]="availablelist.selectedOptions.selected.length==0 || addingSpeakers" (click)="addSpeakers(availablelist.selectedOptions.selected)">
+                Add speakers
+            </button>   
+            <mat-spinner *ngIf="addingSpeakers" diameter="20"></mat-spinner>                             
+        </p>
+        <h3>Current Speaker List</h3>
+        <mat-hint *ngIf="model.speakerList?.length == 0">No data</mat-hint>
+        <mat-selection-list #speakerlist class="scrollable">
+            <mat-list-option *ngFor="let speaker of model.speakerList;last as last" [(value)]="speaker.id">
+                {{speaker.fullName()}}
+                <mat-divider *ngIf="!last"></mat-divider>
+            </mat-list-option>
+        </mat-selection-list>
+        <p>
+            Options selected: {{speakerlist.selectedOptions.selected.length}}
+        </p>
+        <mat-action-row>
+            <mat-spinner *ngIf="removingSpeakers" diameter="20"></mat-spinner>  
+            <button mat-button color="primary" [disabled]="speakerlist.selectedOptions.selected.length==0 || removingSpeakers" 
+                (click)="removeSpeakers(speakerlist.selectedOptions.selected)">Remove speakers</button>
+        </mat-action-row>
+    </mat-expansion-panel> 
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Accounts
+            </mat-panel-title>
+            <mat-panel-description>
+                Select account to register to the conference
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="flex-container">
+            <mat-form-field>
+                <mat-select name="account" placeholder="Select account" [(value)]="registerAddress" (change)="setRegisterAddress($event)">
+                    <mat-option *ngFor="let account of accounts" [value]="account.address">{{account.fullName()}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            
+        </div>
+        <div *ngIf="acquiredVoucher.voucher.id > 0" class="flex-container">
+            <mat-form-field class="full-width">
+                <input type="text" matInput value="{{acquiredVoucher.voucher.title}}" placeholder="Acquired Voucher" readonly>
+            </mat-form-field>
+            <mat-form-field class="number-field">
+                <input type="text" matInput value="{{acquiredVoucher.paid | number:'1.2'}}" placeholder="Paid" readonly>
+            </mat-form-field>
+        </div>
+        <mat-accordion class="center-headers-align hide">
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Voucher
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        This is a voucher properties
+                    </mat-panel-description>
+                </mat-expansion-panel-header>        
+                <div class="flex-container">
+                    <mat-form-field class="number-field">
+                        <input type="text" matInput [(value)]="acquiredVoucher.voucher.id" placeholder="Id" readonly>
+                    </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <input type="text" matInput [(value)]="acquiredVoucher.voucher.title" placeholder="Title" readonly>
+                    </mat-form-field>
+                    <mat-form-field class="number-field">
+                        <input type="text" matInput value="{{acquiredVoucher.voucher.discount | number:'1.2'}}" placeholder="Discount" readonly>
+                        <span matSuffix>%</span>
+                    </mat-form-field>
+                    <mat-form-field class="number-field">
+                        <input type="text" matInput value="{{acquiredVoucher.voucher.price | number:'1.2'}}" placeholder="Price" readonly>
+                        <span matSuffix>OTHs</span>
+                    </mat-form-field>
+                    <mat-form-field class="number-field">
+                        <input type="text" matInput value="{{acquiredVoucher.voucher.isActive()}}" placeholder="Active" readonly>
+                    </mat-form-field>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+        
+        <mat-action-row>
+            <mat-spinner *ngIf="registerAttendee" diameter="20"></mat-spinner>
+            <button mat-button color="primary" [disabled]="registerAddress==''" (click)="getVoucher()"> 
+                get voucher
+            </button>
+            <button mat-button color="warn" [disabled]="registerAddress?.length==0 || registerAttendee" (click)="register()">
+                Register
+            </button>
+        </mat-action-row>
+    </mat-expansion-panel>                      
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Conference attendees
+            </mat-panel-title>
+            <mat-panel-description>
+                List of conference attendees
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+    
+        <mat-label *ngIf="model.attendeeList?.length == 0">No data</mat-label>        
+        <mat-selection-list #attendeelist class="scrollable">
+            <mat-list-option *ngFor="let attendee of model.attendeeList; last as last" [(value)]="attendee.address">
+                {{ attendee.fullName() }}
+                <mat-divider *ngIf="!last"></mat-divider> 
+            </mat-list-option>
+        </mat-selection-list>
+        <p>
+            Options selected: {{attendeelist.selectedOptions.selected.length}}
+        </p>
+        <mat-action-row>
+            <mat-spinner *ngIf="unregisterAttendees" diameter="20"></mat-spinner>  
+            <button mat-button color="primary" [disabled]="attendeelist.selectedOptions.selected.length==0 || unregisterAttendees" 
+                (click)="unregisterSelected(attendeelist.selectedOptions.selected)">Unregister</button>
+        </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Refund amount
+            </mat-panel-title>
+            <mat-panel-description>
+                Refound amount for voucher that user bought
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-form-field class="address-field">
+            <input type="text" matInput [(value)]="refundRecipientAddress" (input)="refundRecipientAddress = $event.target.value" placeholder="Recipient">
+
+            <!-- <mat-select [(value)]="refundRecipientAddress">
+                <mat-option *ngFor="let attendee of model.attendeeList" [value]="attendee.address"
+                required>{{attendee.fullName()}}</mat-option>
+            </mat-select>             -->
+        </mat-form-field>
+        <mat-action-row>
+            <mat-spinner *ngIf="refunding" diameter="20"></mat-spinner>  
+            <button mat-button color="primary" (click)="refund()" [disabled]="refundRecipientAddress=='' || refunding">
+                Refund
+            </button>
+        </mat-action-row>
+    
+    </mat-expansion-panel>
+</mat-accordion>
+<!-- <mat-tab-group #myTabGroup>
+  <mat-tab label="Properties">
+    
+  </mat-tab>
+  <mat-tab label="Owner functions">
+    
+  </mat-tab>
+  <mat-tab label="User function">
+    
+  </mat-tab>
+</mat-tab-group> -->
+<br>
+<button mat-raised-button routerLink="../../">Back</button>
+<button mat-raised-button (click)="test()">TEST</button>

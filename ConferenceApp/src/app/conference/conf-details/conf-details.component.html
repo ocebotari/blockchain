@@ -1,0 +1,179 @@
+<h2>Conference</h2>
+
+<mat-accordion>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            Properties
+            </mat-panel-title>
+            <mat-panel-description>
+                Conference details
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="flex-container">
+            <mat-form-field>
+                <input type="text" matInput id="Title" [(value)]="model.title" placeholder="Title" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <textarea matInput [(value)]="model.descriptions" placeholder="Description" readonly></textarea>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [(value)]="model.organizer" placeholder="Organizer" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput id="sdate" [value]="model.sDate | date:'full'" placeholder="Start Date" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput id="edate" [value]="model.eDate | date:'full'" placeholder="End Date" readonly>
+            </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput value="{{model.owner?.fullName()}}" placeholder="Created By" readonly>
+            </mat-form-field> 
+            <mat-form-field class="number-field">
+                <input type="text" matInput id="attendeeFreeSlots" [(value)]="model.attendeeFreeSlots" placeholder="Free attendee slots" readonly>
+            </mat-form-field>                     
+        </div> 
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="canBuy | async">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Voucher
+            </mat-panel-title>
+            <mat-panel-description>
+                Buy a voucher
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="flex-container">
+            <mat-form-field>
+                <mat-select [(value)]="selectedVoucher" placeholder="Select voucher">
+                    <mat-option *ngFor="let voucher of model.voucherList" [value]="voucher" (click)="showSelectedVoucher = true">
+                        {{ voucher.title }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="number-field">
+                <input type="number" matInput placeholder="Price" [(value)]="selectedVoucher.price" readonly>
+                <span matSuffix>OTH</span>
+        
+            </mat-form-field>
+        </div>
+        <mat-action-row>
+            <button mat-raised-button color="primary" (click)="buy()" [disabled]="!selectedVoucher.active">Buy</button>                                
+        </mat-action-row>
+    
+    </mat-expansion-panel>
+      
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Speakers
+            </mat-panel-title>
+            <mat-panel-description>
+                List of conference speakers
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-hint *ngIf="model.speakerList?.length == 0">No data</mat-hint>
+        <mat-list>
+            <mat-list-item *ngFor="let speaker of model.speakerList;last as last">
+                <p matLine>
+                    <span> {{speaker.fullName()}} </span>
+                    <span matSuffix>({{speaker.voteCount}} votes)</span>
+                </p>
+                <mat-divider *ngIf="!last"></mat-divider> 
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>                
+    <mat-expansion-panel *ngIf="canVote | async">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Votes for speakers
+            </mat-panel-title>
+            <mat-panel-description>
+                Vot for selected speaker
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="flex-container">
+            <mat-form-field [hideRequiredMarker]="false">
+                <mat-label>Select speakers</mat-label>
+                <mat-select name="speakers" (selectionChange)="setVoteAddress($event)" aria-required="true">
+                    <mat-option *ngFor="let speaker of model.speakerList" [value]="speaker.id">{{speaker.fullName()}}</mat-option>
+                </mat-select>
+                <mat-hint>Select the speaker for which you want to vote.</mat-hint>
+            </mat-form-field>
+            <mat-form-field class="number-field">
+                <mat-label>Vote tokens</mat-label>
+                <input type="number" matInput [(value)]="vote.count" (change)="setVoteNumTokens($event)" required>
+                <mat-hint>The vote tokens are used for voting.</mat-hint>
+            </mat-form-field>
+        </div>
+        <mat-action-row>
+            <button mat-raised-button color="primary" (click)="voteForSpeaker()" [disabled]="vote.count == 0 && vote.id == 0">Vote</button>
+            <button mat-raised-button color="primary" (click)="refreshSpeakerList()" [disabled]="model.speakerList.length == 0">Get votes</button>
+        </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="isOwner | async">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Attendees
+            </mat-panel-title>
+            <mat-panel-description>
+                List of conference attendees
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+    
+        <mat-hint *ngIf="model.attendeeList?.length == 0">No data</mat-hint>        
+        <mat-list>
+            <mat-list-item *ngFor="let attendee of model.attendeeList; last as last">               
+                <p matLine>
+                    <span> {{attendee.fullName()}} </span>
+                    <span matSuffix>({{attendee.voteCount}} votes)</span>
+                </p>
+                <mat-divider *ngIf="!last"></mat-divider> 
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="canVote | async">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Votes for attendees
+            </mat-panel-title>
+            <mat-panel-description>
+                List of attendees with votes received
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="flex-container">
+            <mat-form-field [hideRequiredMarker]="false">
+                <mat-label>Select attendee</mat-label>
+                <mat-select name="attendees" (selectionChange)="setAttendeeVoteAddress($event)" [(value)]="attendeevote.address" aria-required="true">
+                    <mat-option *ngFor="let attendee of model.attendeeList" [value]="attendee.address">{{attendee.fullName()}}</mat-option>
+                </mat-select>
+                <mat-hint>Select the attendee to vote.</mat-hint>
+            </mat-form-field>
+            <mat-form-field class="number-field">
+                <mat-label>Vote tokens</mat-label>
+                <input type="number" matInput [(value)]="attendeevote.numTokens" (change)="setAttendeeVoteNumTokens($event)" required>
+                <mat-hint>The tokens are used for voting.</mat-hint>
+            </mat-form-field>
+        </div>
+        <mat-action-row>
+            <button mat-raised-button color="primary" (click)="voteForAttendee()" [disabled]="attendeevote.numTokens == 0 || attendeevote.address?.length == 0">Vote</button>    
+            <button mat-raised-button color="primary" (click)="refreshAttendeeList()" [disabled]="model.attendeeList?.length == 0">Get votes</button>    
+        </mat-action-row>
+        
+         
+    </mat-expansion-panel>
+    
+</mat-accordion>
+<!-- <mat-tab-group #myTabGroup>
+  <mat-tab label="Properties">
+    
+  </mat-tab>
+  <mat-tab label="Owner functions">
+    
+  </mat-tab>
+  <mat-tab label="User function">
+    
+  </mat-tab>
+</mat-tab-group> -->
+<br>
+<button mat-raised-button routerLink="/conferences">Back</button>

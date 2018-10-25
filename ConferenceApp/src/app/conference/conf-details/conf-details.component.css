@@ -1,0 +1,33 @@
+.simple-container {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+
+  .number-field, .mat-form-field.number-field{
+      width: 200px;
+  }
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    margin: 1em 0;
+  }
+  
+  /* .conf-container > * {
+    width: 60%;
+  } */
+
+  .address-field {
+    width: 400px;
+  }
+
+  .button-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }

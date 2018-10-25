@@ -1,0 +1,77 @@
+<mat-card>
+    <mat-card-header>
+        <div mat-card-avatar class="avatar-header-image"></div>
+        <mat-card-title>{{model.symbol}}</mat-card-title>
+        <mat-card-subtitle>{{model.name}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="simple-container">
+            <p>interacting with token at address:</p>
+            <p>{{model.address}}</p>
+            <p>Total supply is: {{model.totalSupply | number:'1.2-3'}} OTH </p>
+            <p>Owner: {{model.owner?.fullName()}}</p>
+            <p>Owner address: {{model.owner?.address}}</p>
+            <p>Created: {{ model.created | date:'full' }}</p>
+            <input type="datetime" matInput id="name" [(value)]="model.name" readonly>
+            <!-- <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input type="text" matInput id="name" [(value)]="model.name" readonly>
+                <mat-hint>fancy name: eg Simon Bucks</mat-hint>
+            </mat-form-field>  
+            <p></p>          
+            <mat-form-field>
+                <mat-label>Decimals</mat-label>
+                <input type="text" matInput id="decimals" [(value)]="model.decimals" readonly>
+                <mat-hint>How many decimals to show</mat-hint>
+            </mat-form-field>
+            <p></p>
+            <mat-form-field>
+                <mat-label>Symbol</mat-label>
+                <input type="text" matInput id="symbol" [(value)]="model.symbol" readonly>
+                <mat-hint>An identifier: eg SBX</mat-hint>
+            </mat-form-field>
+            <p></p>
+            <mat-form-field>
+                <mat-label>Total Supply</mat-label>
+                <input type="text" matInput id="totalSupply" value="{{model.totalSupply | number:'1.2'}}" readonly>
+                <span matSuffix>OTH</span>
+                <mat-hint>total number of tokens in existence</mat-hint>
+            </mat-form-field>
+            <p></p>
+            <mat-form-field>
+                <mat-label>Owner</mat-label>
+                <input type="text" matInput id="owner" value="{{model.owner?.fullName()}}" readonly>
+            </mat-form-field>-->
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" routerLink="./mint">MINT</button>
+        <!-- <button mat-raised-button color="primary" routerLink="./send">TRANSFER</button> -->        
+    </mat-card-actions>
+</mat-card>
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Balance</mat-card-title>
+        <mat-card-subtitle>Check balance of account</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="simple-container">
+            <mat-form-field class="address-field">
+                <mat-label>Account</mat-label>
+                <input type="text" matInput (change)="balanceModel.address = $event.target.value" [(value)]="balanceModel.address" required>
+                <mat-hint>eg:0x4410e253D</mat-hint>
+            </mat-form-field>
+            <p></p>
+            <p>Selected account has:</p>
+            <p>
+                <span>{{balanceModel.balance | number:'1.2-3'}}</span> {{model.symbol}}</p>
+            <p>
+                <span>{{balanceModel.balanceEth | number:'1.2-3'}}</span> ETH</p>
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" [disabled]="balanceModel.address == ''" (click)="refreshBalance()">Balance</button>
+    </mat-card-actions>
+</mat-card>
+<p></p>
+<button mat-raised-button routerLink="../">Back</button>

@@ -1,0 +1,58 @@
+<mat-card class="example-container">
+  <mat-card-header>
+        <mat-card-title>Transfer {{model.tokenname}}</mat-card-title>
+        <mat-card-subtitle>Transfer to another account</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>    
+    <!-- <mat-form-field id="address-selector">
+      <mat-label>Select receiver</mat-label>
+      <mat-select name="account" [(value)]="model.receiver" (change)="refreshBalance()">
+        <mat-option *ngFor="let account of accounts$ | async" [value]="account.address">{{account.fullName()}}</mat-option>
+      </mat-select>
+    </mat-form-field> -->
+    <p></p>
+    <mat-form-field class="address-field">
+        <mat-label>Receiver</mat-label>
+        <input type="text" matInput (change)="model.receiver = $event.target.value" [(value)]="model.receiver"
+        required>
+    </mat-form-field>
+    <p></p>
+    <mat-form-field>
+        <mat-label>Amount</mat-label>
+        <input type="number" step="0.01" matInput (input)="model.amount = $event.target.value" [(value)]="model.amount"
+            required>
+    </mat-form-field>
+    <mat-radio-group [(ngModel)]="model.amountType">
+        <mat-radio-button value="eth">Ether</mat-radio-button>
+        <mat-radio-button value="oth">OTH</mat-radio-button>
+    </mat-radio-group>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" id="send" [disabled]="model.amount == 0 || model.receiver == '' || model.isTtransfer" (click)="transfer()">
+          Transfer
+      </button>
+      <button mat-raised-button routerLink="../../{{model.address}}/">Back</button>
+    </mat-card-actions>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="example-container">
+    <mat-card-header>
+        <mat-card-title>Check balance</mat-card-title>
+        <mat-card-subtitle>Check balance of account</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <p></p>
+        <mat-form-field class="address-field">
+            <mat-label>Account</mat-label>
+            <input type="text" matInput (change)="model.receiver = $event.target.value" [(value)]="model.receiver" required>
+            <mat-hint>eg:0x4410e253D</mat-hint>
+        </mat-form-field>
+        <p></p>
+        <p>Selected account has:</p>
+        <p><span>{{model.balance.toFixed(3)}}</span> {{model.symbol}}</p>
+        <p><span>{{model.balanceEth.toFixed(3)}}</span> ETH</p>
+        <mat-card-actions>
+            <button mat-raised-button color="primary" [disabled]="model.receiver == ''" (click)="refreshBalance()">Balance</button>
+        </mat-card-actions>
+    </mat-card-content>
+</mat-card>

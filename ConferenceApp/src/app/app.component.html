@@ -1,0 +1,39 @@
+<mat-toolbar color="primary">
+    <span>{{title}}</span>
+
+    <!-- This fills the remaining space of the current row -->
+    <span class="fill-remaining-space"></span>
+          
+    <a routerLinkActive="active" routerLink="/login" title="Login" mat-icon-button
+     *ngIf="!authService.isLoggedIn">
+        <mat-icon aria-label="Login">lock</mat-icon>
+    </a>
+
+    <span *ngIf="authService.isLoggedIn" class="logged-user">{{authService.loggedUser?.fullName()}}</span>
+    <a routerLinkActive="active" routerLink="/login" title="Logout" mat-icon-button
+     *ngIf="authService.isLoggedIn">
+        <mat-icon aria-label="Logout">lock_open</mat-icon>
+    </a>
+</mat-toolbar>
+<mat-nav-list>
+        <!-- <a mat-list-item routerLinkActive="active" routerLink="/login">Login</a> -->
+        <a mat-list-item routerLinkActive="active" routerLink="/admin">Admin</a>        
+        <!-- <a mat-list-item routerLinkActive="active" routerLink="/token">Token</a> -->
+        <a mat-list-item routerLinkActive="active" routerLink="/wallet">My Wallet</a>
+        <a mat-list-item routerLinkActive="active" routerLink="/conferences">Conferences</a>
+  
+      </mat-nav-list>
+<p></p>
+<router-outlet></router-outlet> 
+
+<!-- <mat-tab-group>
+  <mat-tab label="OTH">
+    <app-oth-details></app-oth-details>  
+  </mat-tab>
+  <mat-tab label="Transfer">
+    <app-token-sender></app-token-sender>  
+  </mat-tab>
+  <mat-tab label="Conference">
+    <app-conf-details></app-conf-details>  
+  </mat-tab>
+</mat-tab-group> -->

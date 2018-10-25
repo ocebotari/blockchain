@@ -1,0 +1,28 @@
+<div mat-dialog-content>
+    <div style="border-radius: 4px;">
+        <div class="account-modal-container">
+            <div>
+                <div class="identicon">
+                </div>
+            </div>
+            <div class="editable-label account-modal__name">
+                <div class="editable-label__value">{{data.name}}</div>
+            </div>
+            <div class="div flex-column flex-center">
+                <div class="div qr-wrapper"></div>
+            </div>
+            <div class="ellip-address-wrapper">
+                <input matInput class="qr-ellip-address" [(value)]="data.address" readonly="" (click)="selectAll($event)">
+            </div>
+            <p></p>
+            <mat-divider></mat-divider>  
+            <p></p>
+            <a mat-raised-button class="account-modal__button" href="{{data.link}}{{data.address}}" target="_blank">View account on Etherscan</a>  
+            <button mat-raised-button class="account-modal__button">Export Private Key</button>      
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>CLOSE</button>
+  <!-- <button mat-button [mat-dialog-close]="data" cdkFocusInitial>next</button> -->
+</div>

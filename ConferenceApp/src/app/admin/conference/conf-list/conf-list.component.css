@@ -1,0 +1,21 @@
+table {
+    width: 100%;
+}
+
+.item-mat-card {
+    max-width: 450px;
+    margin: 0 5px 5px;
+}
+  
+  .avatar-header-image {
+    background-image: url('http://localhost:4200/assets/images/events/B3587564-5638-44F0-B2D0-C97C85AD523B.jpg');
+    background-size: cover;
+  }
+
+  .hide{
+      display: none;
+  }
+
+  .left{
+      float: left;
+  }

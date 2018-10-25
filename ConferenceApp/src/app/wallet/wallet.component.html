@@ -1,0 +1,163 @@
+<div class="wallet-container flex-column full-height">
+    <div class="">
+        <mat-toolbar>
+            <mat-toolbar-row>
+                <span>My wallet</span>
+                <span class="fill-remaining-space"></span>
+                <!-- <button mat-icon-button color="primary" class="toolbar-icon" [matMenuTriggerFor]="menu">
+                                    <mat-icon aria-label="Show accounts menu">person</mat-icon>
+                                </button> -->
+                <!-- <mat-menu #menu="matMenu">
+                                    <mat-nav-list>
+                                        <mat-list-item *ngFor="let item of accounts$ | async">
+                                            <mat-icon *ngIf="isCurrent(item.address)">check</mat-icon>
+                                            <img matListAvatar src="../../assets/images/account.png" alt="">
+                                            <h3 matLine> {{item.fullName()}} </h3>
+                                            <p matLine>
+                                                <span> {{item.balance}} OTH</span> 
+                                            </p>
+                                            <p matLine>{{item.balanceEth}} ETH</p>
+                                        </mat-list-item>
+                                    </mat-nav-list>
+                    
+                                    <mat-divider></mat-divider>
+                    
+                                    <button mat-menu-item *ngFor="let item of accounts$ | async">
+                                        <mat-icon *ngIf="isCurrent(item.address)">check</mat-icon>
+                                        <span>{{item.fullName()}}</span>
+                                    </button>
+                                    <button mat-menu-item (click)="create()">
+                                        <mat-icon>person_add</mat-icon>
+                                        <span>Create account</span>
+                                    </button>
+                                </mat-menu> -->
+                <mat-icon class="toolbar-icon">verified_user</mat-icon>
+            </mat-toolbar-row>
+        </mat-toolbar>
+        <mat-progress-bar *ngIf="trxsLoading" mode="indeterminate"></mat-progress-bar>
+        <div class="main-wallet-content">
+            
+            <div class="account-and-transaction-details">
+                <div class="wallet-view flex-column">
+                    <mat-list>
+                        <mat-list-item>
+                                <p matLine class="center"><img matListAvatar src="../../assets/images/account.png" alt="Account"></p>
+                                <p matLine></p>
+                            <h1 matLine class="center">{{accountName}}}</h1>
+                            <p matLine></p>
+                            <button matLine mat-button color="primary" (click)="openDetailsDialog()">Details</button>
+                            <!-- <p matLine class="center">
+                                <mat-chip-list>
+                                    <mat-chip class="bordered">
+                                        <a routerLink=".">Details</a>
+                                    </mat-chip>
+                                </mat-chip-list>
+                            
+                            </p> -->
+                            <p matLine></p>
+                            <p matLine></p>
+                            <p matLine class="center">
+                                    <span> {{formatedAddress}} </span>
+                                    <i title="Copy value to clipboard" aria-hidden="true" class="copyIcon fa fa-clipboard"></i>
+                                </p>
+                        </mat-list-item>                
+                        <!-- <mat-list-item >
+                            <img matListAvatar src="../../assets/images/eth.png" alt="ETH">
+                            <h3 matLine> {{balanceEth}} ETH </h3>
+                            <p matLine>
+                                <span> </span>
+                                <span class="demo-2"></span>
+                            </p>
+                        </mat-list-item> -->
+                        <mat-list-item>
+                            <img matListAvatar src="../../assets/images/eth.png" alt="{{token?.name}}">
+                            <h3 matLine> {{balanceOth.toFixed(3)}} {{token?.symbol}} </h3>
+                            <p matLine>
+                                <span> {{balanceEth.toFixed(3)}} ETH </span>
+                                <span class="demo-2"></span>
+                            </p>
+                        </mat-list-item>
+                    </mat-list>
+
+                </div>
+                <div class="tx-view flex-column">
+                    <mat-toolbar class="white">
+                        <mat-toolbar-row>
+                            <mat-list>
+                                <mat-list-item>
+                                    <img class="bordered" matListAvatar src="../../assets/images/eth.png" alt="{{token?.name}}">
+                                    <h3 matLine> {{balanceOth.toFixed(3)}} {{token?.symbol}} </h3>
+                                    <p matLine>
+                                        <span> {{balanceEth.toFixed(3)}} ETH </span>
+                                    </p>
+                                </mat-list-item>
+                            </mat-list>
+                            <span class="fill-remaining-space"></span>
+                            <button mat-button color="primary" (click)="openDialog()">SEND</button>
+                            <!-- <button mat-button color="primary" (click)="saveBatch()">Save</button>
+                            <button mat-button color="primary" (click)="getTrans()">Get</button> -->
+                        </mat-toolbar-row>
+                    </mat-toolbar>
+
+                    <p>Transactions</p>
+                    <mat-divider></mat-divider>
+                    <div class="tx-list-container">                
+                        <mat-hint *ngIf="!trxsLoading && trxs?.length == 0">No data</mat-hint>
+                        <mat-nav-list>
+                            <mat-list-item *ngFor="let tx of trxsObservable | async;last as last"
+                            (click)="openTransaction(tx.hash)">
+                                <img matListAvatar src='{{tx.tokenTransfer || tx.to ? "../../assets/images/tx.png" : "../../assets/images/eth.png"}}' 
+                                alt="Transaction">
+                                <div matLine class="flex-row">
+                                    <p *ngIf="tx.tokenTransfer">
+                                        <span class="tx-list-account">
+                                            {{tx.tokenTransfer.to.substr(0, 10)}}...{{tx.tokenTransfer.to.substr(tx.tokenTransfer.to.length - 4)}}
+                                        </span>
+                                        <span class="tx-list-status {{tx.status}}">{{tx.status}}</span>
+                                        <mat-spinner *ngIf="tx.status == 'Submitted'" diameter="20" class="fr"></mat-spinner>
+                                    </p>
+                                    <p *ngIf="!tx.tokenTransfer">
+                                        <span class="tx-list-account">
+                                            {{tx.to ? (tx.to.substr(0, 10) +"..." + tx.to.substr(tx.to.length - 4)) : "Contract Deployment" }}
+                                        </span>
+                                        <span class="tx-list-status {{tx.status}}">{{tx.status}}</span>
+                                        <mat-spinner *ngIf="tx.status == 'Submitted'" diameter="20" class="fr"></mat-spinner>
+                                    </p>   
+                                    <span class="fill-remaining-space"></span>
+                                    <span>{{tx.tokenTransfer ? tx.tokenTransfer.value + " OTH " : tx.to ? tx.value + " ETH " : ""}}</span>                                         
+                                </div>
+                                <p matLine>{{tx.date | date:'medium'}}</p>
+                                <!-- <p *ngIf="tx.hash == -1" matLine>Transaction in progress</p> -->
+                                <mat-divider *ngIf="!last"></mat-divider>
+                            </mat-list-item>
+
+                            <!-- <mat-list-item *ngFor="let tx of trxs | async;last as last" (click)="openTransaction(tx.hash)">
+                                <img matListAvatar src='{{tx.tokenTransfer || tx.to ? "../../assets/images/tx.png" : "../../assets/images/eth.png"}}' 
+                                    alt="Transaction">
+                                <div matLine class="flex-display">
+                                    
+                                    <p *ngIf="tx.tokenTransfer">
+                                        <span class="tx-list-account">
+                                            {{tx.tokenTransfer.to.substr(0, 10)}}...{{tx.tokenTransfer.to.substr(tx.tokenTransfer.to.length - 4)}}
+                                        </span>
+                                        <span class="tx-list-status {{tx.status}}">{{tx.status}}</span>
+                                    </p>
+                                    <p *ngIf="!tx.tokenTransfer">
+                                        <span class="tx-list-account">
+                                            {{tx.to ? (tx.to.substr(0, 10) +"..." + tx.to.substr(tx.to.length - 4)) : "Contract Deployment" }}
+                                        </span>
+                                        <span class="tx-list-status {{tx.status}}">{{tx.status}}</span>
+                                    </p>
+                                    <span class="fill-remaining-space"></span>
+                                    <span>{{tx.tokenTransfer ? tx.tokenTransfer.value + " OTH " : tx.to ? tx.value + " ETH " : ""}}</span>
+                                </div>
+                                
+                                <mat-divider *ngIf="!last"></mat-divider>
+                            </mat-list-item> -->
+                        </mat-nav-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
