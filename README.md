@@ -6,6 +6,10 @@ The OTH token allows simple creation of a standard ERC20 token on Ethereum. It r
 
 An Ethereum smart contract.
 
+## Wallet
+
+An Angular application with an injected web3. 
+
 ## Developing
 
 ```npm install```   
